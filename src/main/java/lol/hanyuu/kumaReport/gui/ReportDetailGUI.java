@@ -52,13 +52,13 @@ public class ReportDetailGUI {
             inventory.setItem(4, createTitleItem(reportId));
 
             // 1行目: 通報者, 被通報者
-            inventory.setItem(11, createInfoItem("§e通報者", report.getReporterName(), 
+            inventory.setItem(11, createInfoItem("§e通報者", report.getReporterName(),
                     Material.PLAYER_HEAD, Arrays.asList(
-                            "§7UUID: §f" + report.getReporterUUID()
+                            "§7UUID: §f" + report.getReporterUuid()
                     )));
-            inventory.setItem(13, createInfoItem("§c被通報者", report.getReportedName(), 
+            inventory.setItem(13, createInfoItem("§c被通報者", report.getReportedName(),
                     Material.PLAYER_HEAD, Arrays.asList(
-                            "§7UUID: §f" + report.getReportedUUID()
+                            "§7UUID: §f" + report.getReportedUuid()
                     )));
 
             String statusKey = "status." + report.getStatus().name();
