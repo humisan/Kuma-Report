@@ -105,8 +105,8 @@ public class BugReportGUI {
         if (slot == 38) {
             player.closeInventory();
             player.sendMessage(plugin.getMessageManager().getMessage("bugreport.input-prompt"));
-            // プレイヤーがチャットで説明を入力するのを待つ
-            // AsyncPlayerChatEventリスナーで処理される
+            // ChatListenerでチャット入力を待つ
+            plugin.getChatListener().startBugReportInput(player);
             return;
         }
 
@@ -114,6 +114,8 @@ public class BugReportGUI {
         if (slot == 42) {
             player.closeInventory();
             player.sendMessage(plugin.getMessageManager().getMessage("report.reason-cancelled"));
+            // 入力待機状態をクリア
+            plugin.getChatListener().clearInputState(player);
             return;
         }
     }

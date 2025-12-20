@@ -1,6 +1,7 @@
 package lol.hanyuu.kumaReport.manager;
 
 import lol.hanyuu.kumaReport.KumaReport;
+import lol.hanyuu.kumaReport.model.BugReport;
 import lol.hanyuu.kumaReport.model.Report;
 import org.bukkit.Bukkit;
 
@@ -46,6 +47,25 @@ public class DiscordWebhookManager {
                 sendWebhook(embed);
             } catch (Exception e) {
                 plugin.getLogger().warning("Discord 通知送信エラー: " + e.getMessage());
+            }
+        });
+    }
+
+    /**
+     * バグレポート発生時の通知を送信
+     */
+    public void notifyNewBugReport(BugReport bugReport) {
+        if (!enabled) {
+            return;
+        }
+
+        // 非同期で送信
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            try {
+                String embed = buildBugReportEmbed(bugReport);
+                sendWebhook(embed);
+            } catch (Exception e) {
+                plugin.getLogger().warning("Discord バグレポート通知送信エラー: " + e.getMessage());
             }
         });
     }
@@ -119,6 +139,36 @@ public class DiscordWebhookManager {
                 "      {\"name\": \"日時\", \"value\": \"" + sdf.format(report.getCreatedAt()) + "\", \"inline\": true}\n" +
                 "    ],\n" +
                 "    \"footer\": {\"text\": \"Kuma-Report\"}\n" +
+                "  }]\n" +
+                "}";
+
+        return json;
+    }
+
+    /**
+     * バグレポート用のエンベッドを構築
+     */
+    private String buildBugReportEmbed(BugReport bugReport) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        String mention = "";
+        if (mentionRoleId != null && !mentionRoleId.isEmpty()) {
+            mention = "<@&" + mentionRoleId + "> ";
+        }
+
+        String json = "{\n" +
+                "  \"content\": \"" + mention + "\",\n" +
+                "  \"embeds\": [{\n" +
+                "    \"title\": \"新しいバグレポートが届きました\",\n" +
+                "    \"color\": 16753920,\n" +
+                "    \"fields\": [\n" +
+                "      {\"name\": \"レポートID\", \"value\": \"#" + bugReport.getId() + "\", \"inline\": true},\n" +
+                "      {\"name\": \"報告者\", \"value\": \"" + bugReport.getReporterName() + "\", \"inline\": true},\n" +
+                "      {\"name\": \"説明\", \"value\": \"" + escapeJson(bugReport.getDescription()) + "\", \"inline\": false},\n" +
+                "      {\"name\": \"場所\", \"value\": \"" + escapeJson(bugReport.getLocation()) + "\", \"inline\": false},\n" +
+                "      {\"name\": \"日時\", \"value\": \"" + sdf.format(bugReport.getCreatedAt()) + "\", \"inline\": true}\n" +
+                "    ],\n" +
+                "    \"footer\": {\"text\": \"Kuma-Report Bug Report\"}\n" +
                 "  }]\n" +
                 "}";
 

@@ -94,13 +94,8 @@ public class ReportCategoryGUI {
         for (Map.Entry<Integer, CategoryInfo> entry : CATEGORIES.entrySet()) {
             CategoryInfo category = entry.getValue();
             if (category.slot == slot) {
-                if (category.type == ReportType.OTHER) {
-                    // 「その他」の場合はチャット入力待機へ
-                    openChatInputMode(player, data);
-                } else {
-                    // 他のカテゴリはそのまま通報を送信
-                    submitReport(player, category.type, "", data);
-                }
+                // 全てのカテゴリで詳細入力オプションを提供
+                openChatInputMode(player, category.type, data);
                 return;
             }
         }
@@ -109,93 +104,21 @@ public class ReportCategoryGUI {
     /**
      * チャット入力モードを開始
      */
-    private void openChatInputMode(Player player, Map<String, Object> data) {
+    private void openChatInputMode(Player player, ReportType reportType, Map<String, Object> data) {
         player.closeInventory();
-        player.sendMessage(plugin.getMessageManager().getMessage("report.reason-input"));
-
-        // TODO: チャットリスナーを実装して30秒のタイムアウト処理
-        // 一時的に簡易実装
-        GUIListener listener = getGUIListener();
-        if (listener != null) {
-            Map<String, Object> newData = new HashMap<>(data);
-            newData.put("waitingForReason", true);
-            newData.put("reportType", ReportType.OTHER);
-            listener.setGUIData(player, newData);
-        }
-    }
-
-    /**
-     * 通報を送信
-     */
-    private void submitReport(Player reporter, ReportType reportType, String customReason, Map<String, Object> data) {
+        
         Player targetPlayer = (Player) data.get("targetPlayer");
         if (targetPlayer == null) {
-            reporter.sendMessage(plugin.getMessageManager().getMessage("common.player-not-found",
+            player.sendMessage(plugin.getMessageManager().getMessage("common.player-not-found",
                     Map.of("player", (String) data.getOrDefault("targetName", "不明"))));
             return;
         }
 
-        String reason = customReason.isEmpty() ? reportType.name() : customReason;
-
-        // 通報処理をReportCommandに委譲
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            try {
-                lol.hanyuu.kumaReport.model.Report report = new lol.hanyuu.kumaReport.model.Report(
-                        reporter.getUniqueId(),
-                        reporter.getName(),
-                        targetPlayer.getUniqueId(),
-                        targetPlayer.getName(),
-                        reason,
-                        reportType
-                );
-
-                int reportId = plugin.getDatabaseManager().getReportDAO().createReport(report);
-
-                // クールダウン設定
-                plugin.getCooldownManager().setReportCooldown(reporter.getUniqueId());
-
-                // 完了メッセージ
-                Map<String, String> placeholders = Map.of("player", targetPlayer.getName());
-                Bukkit.getScheduler().runTask(plugin, () ->
-                        reporter.sendMessage(plugin.getMessageManager().getMessage("report.success", placeholders))
-                );
-
-                // スタッフに通知
-                notifyStaff(reporter.getName(), targetPlayer.getName(), reason);
-
-                // Discord通知
-                report.setId(reportId);
-                plugin.getDiscordWebhookManager().notifyNewReport(report);
-
-            } catch (Exception e) {
-                plugin.getLogger().severe("通報の保存に失敗しました: " + e.getMessage());
-                Bukkit.getScheduler().runTask(plugin, () ->
-                        reporter.sendMessage(plugin.getMessageManager().getMessage("common.command-error"))
-                );
-            }
-        });
-
-        reporter.closeInventory();
-    }
-
-    /**
-     * スタッフに通知
-     */
-    private void notifyStaff(String reporterName, String reportedName, String reason) {
-        if (!plugin.getConfigManager().isStaffNotificationEnabled()) {
-            return;
-        }
-
-        Map<String, String> placeholders = Map.of(
-                "reporter", reporterName,
-                "reported", reportedName,
-                "reason", reason
-        );
-        String message = plugin.getMessageManager().getMessage("staff.new-report", placeholders);
-
-        Bukkit.getOnlinePlayers().stream()
-                .filter(p -> p.hasPermission("kumareport.notify"))
-                .forEach(p -> p.sendMessage(message));
+        // 詳細入力のプロンプトを表示
+        player.sendMessage(plugin.getMessageManager().getMessage("report.detail-input"));
+        
+        // ChatListenerで詳細入力を待つ
+        plugin.getChatListener().startReportDetailInput(player, targetPlayer, reportType);
     }
 
     /**
@@ -238,6 +161,7 @@ public class ReportCategoryGUI {
             lore.add("§8━━━━━━━━━━━━━━━");
             lore.add("");
             lore.add("§a§l▶ §aクリックして選択");
+            lore.add("§7クリック後、詳細を入力できます");
             
             meta.setLore(lore);
             item.setItemMeta(meta);
@@ -269,8 +193,7 @@ public class ReportCategoryGUI {
             );
             case OTHER -> Arrays.asList(
                     "§7上記に該当しない",
-                    "§7その他の違反行為",
-                    "§8(詳細を入力できます)"
+                    "§7その他の違反行為"
             );
         };
     }

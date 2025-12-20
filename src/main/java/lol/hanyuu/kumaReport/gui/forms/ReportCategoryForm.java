@@ -60,13 +60,10 @@ public class ReportCategoryForm {
                         // カテゴリを決定
                         ReportType reportType = getReportTypeFromButton(buttonText);
 
-                        if (reportType == ReportType.OTHER) {
-                            // 「その他」の場合：テキスト入力 Form へ
-                            new ReportReasonInputForm(plugin).open(player, playerData);
-                        } else {
-                            // 他のカテゴリ：そのまま通報を送信
-                            submitReport(player, reportType, "", playerData);
-                        }
+                        // 全てのカテゴリで詳細入力フォームへ遷移
+                        Map<String, Object> newData = new java.util.HashMap<>(playerData);
+                        newData.put("reportType", reportType);
+                        new ReportReasonInputForm(plugin).open(player, newData);
                     });
 
         } catch (Exception e) {

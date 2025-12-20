@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * 通報理由入力 Form（「その他」選択時用）
+ * 通報理由入力 Form（詳細入力用）
  * CustomForm でテキスト入力フィールドを提供
  */
 public class ReportReasonInputForm {
@@ -31,33 +31,37 @@ public class ReportReasonInputForm {
             FloodgateApi floodgateApi = FloodgateApi.getInstance();
             if (!floodgateApi.isFloodgatePlayer(reporter.getUniqueId())) {
                 // Java版プレイヤー：チャット入力
-                reporter.sendMessage(plugin.getMessageManager().getMessage("report.reason-input"));
+                reporter.sendMessage(plugin.getMessageManager().getMessage("report.detail-input"));
                 return;
+            }
+
+            // ReportTypeを取得
+            ReportType reportType = (ReportType) playerData.getOrDefault("reportType", ReportType.OTHER);
+            String categoryName = plugin.getMessageManager().getMessage("type." + reportType.name());
+            if (categoryName == null || categoryName.startsWith("type.")) {
+                categoryName = reportType.name();
             }
 
             // Cumulus CustomForm を構築
             CustomForm.Builder formBuilder = CustomForm.builder()
-                    .title("通報理由（その他）")
+                    .title("通報詳細入力")
                     .label("被通報者: " + playerData.getOrDefault("targetName", "不明"))
-                    .input("理由を入力してください", "理由（5～500文字）");
+                    .label("カテゴリ: " + categoryName)
+                    .input("詳細を入力してください（省略可）", "詳細（0～500文字、省略可能）");
 
             // フォーム応答ハンドラを設定
             formBuilder.validResultHandler(response -> {
-                // CustomFormResponse.asInput(1) で2番目のフィールド（理由）を取得
-                String customReason = response.asInput(1);
+                // CustomFormResponse.asInput(2) で3番目のフィールド（詳細）を取得
+                String detail = response.asInput(2);
 
-                if (customReason == null || customReason.trim().isEmpty()) {
-                    reporter.sendMessage(plugin.getMessageManager().getMessage("report.invalid-reason-length"));
-                    return;
-                }
-
-                if (customReason.length() < 5 || customReason.length() > 500) {
+                // 詳細の処理（空でもOK）
+                if (detail != null && detail.length() > 500) {
                     reporter.sendMessage(plugin.getMessageManager().getMessage("report.invalid-reason-length"));
                     return;
                 }
 
                 // 通報を送信
-                submitReport(reporter, customReason, playerData);
+                submitReport(reporter, reportType, detail, playerData);
             });
 
             // フォーム送信エラーハンドラ
@@ -81,12 +85,20 @@ public class ReportReasonInputForm {
     /**
      * 通報を送信
      */
-    private void submitReport(Player reporter, String customReason, Map<String, Object> data) {
+    private void submitReport(Player reporter, ReportType reportType, String detail, Map<String, Object> data) {
         Player targetPlayer = (Player) data.get("targetPlayer");
         if (targetPlayer == null || !targetPlayer.isOnline()) {
             reporter.sendMessage(plugin.getMessageManager().getMessage("common.player-not-found",
                     Map.of("player", (String) data.getOrDefault("targetName", "不明"))));
             return;
+        }
+
+        // 詳細が空の場合はカテゴリ名のみを使用
+        String reason;
+        if (detail == null || detail.trim().isEmpty()) {
+            reason = reportType.name();
+        } else {
+            reason = reportType.name() + ": " + detail;
         }
 
         // ReportCategoryGUI と同じロジックを実行
@@ -97,8 +109,8 @@ public class ReportReasonInputForm {
                         reporter.getName(),
                         targetPlayer.getUniqueId(),
                         targetPlayer.getName(),
-                        customReason,
-                        ReportType.OTHER
+                        reason,
+                        reportType
                 );
 
                 int reportId = plugin.getDatabaseManager().getReportDAO().createReport(report);
@@ -113,7 +125,7 @@ public class ReportReasonInputForm {
                 );
 
                 // スタッフに通知
-                notifyStaff(reporter.getName(), targetPlayer.getName(), customReason);
+                notifyStaff(reporter.getName(), targetPlayer.getName(), reason);
 
                 // Discord通知
                 report.setId(reportId);
