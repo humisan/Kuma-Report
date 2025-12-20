@@ -29,6 +29,7 @@ report:
   gui-title: "プレイヤーを選択"
   category-select: "通報理由を選択"
   reason-input: "{prefix} &#60A5FA「その他」の理由をチャットに入力してください。&#94A3B8（30秒以内）"
+  detail-input: "{prefix} &#60A5FA詳細をチャットに入力してください。&#94A3B8（省略する場合は「skip」または「なし」と入力）"
   reason-timeout: "{prefix} &#EF4444入力がタイムアウトしました。"
   reason-cancelled: "{prefix} &#94A3B8通報をキャンセルしました。"
   invalid-reason-length: "{prefix} &#EF4444理由は5文字以上500文字以下である必要があります。"

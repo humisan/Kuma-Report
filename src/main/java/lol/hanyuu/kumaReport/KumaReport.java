@@ -4,6 +4,7 @@ import lol.hanyuu.kumaReport.command.BugReportCommand;
 import lol.hanyuu.kumaReport.command.ReportAdminCommand;
 import lol.hanyuu.kumaReport.command.ReportCommand;
 import lol.hanyuu.kumaReport.database.DatabaseManager;
+import lol.hanyuu.kumaReport.listener.ChatListener;
 import lol.hanyuu.kumaReport.listener.GUIListener;
 import lol.hanyuu.kumaReport.listener.PlayerJoinListener;
 import lol.hanyuu.kumaReport.manager.ConfigManager;
@@ -29,6 +30,7 @@ public final class KumaReport extends JavaPlugin {
 
     // リスナー
     private GUIListener guiListener;
+    private ChatListener chatListener;
 
     @Override
     public void onEnable() {
@@ -102,6 +104,10 @@ public final class KumaReport extends JavaPlugin {
         guiListener = new GUIListener(this);
         getServer().getPluginManager().registerEvents(guiListener, this);
 
+        // チャット入力リスナー
+        chatListener = new ChatListener(this);
+        getServer().getPluginManager().registerEvents(chatListener, this);
+
         // プレイヤー参加リスナー
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this);
 
@@ -155,5 +161,12 @@ public final class KumaReport extends JavaPlugin {
      */
     public DiscordWebhookManager getDiscordWebhookManager() {
         return discordWebhookManager;
+    }
+
+    /**
+     * ChatListenerを取得
+     */
+    public ChatListener getChatListener() {
+        return chatListener;
     }
 }
