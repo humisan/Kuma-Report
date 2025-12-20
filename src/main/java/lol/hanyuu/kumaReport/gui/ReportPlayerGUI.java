@@ -149,6 +149,7 @@ public class ReportPlayerGUI {
                     newData.put("targetUUID", targetPlayer.getUniqueId());
                     newData.put("targetName", targetPlayer.getName());
                     listener.setGUIData(player, newData);
+                    listener.setGUIState(player, "CATEGORY_SELECT");
                 }
 
                 ReportCategoryGUI categoryGUI = new ReportCategoryGUI(plugin);
@@ -166,33 +167,14 @@ public class ReportPlayerGUI {
 
         if (meta != null) {
             meta.setOwningPlayer(player);
-            meta.setDisplayName("§e§l" + player.getName());
-            
-            List<String> lore = new ArrayList<>();
-            lore.add("§8━━━━━━━━━━━━━━━");
-            lore.add("§7ワールド: §f" + player.getWorld().getName());
-            lore.add("§7体力: §c" + String.format("%.1f", player.getHealth()) + " §8/ §c" + String.format("%.1f", player.getMaxHealth()));
-            lore.add("§7ゲームモード: §b" + getGameModeDisplay(player.getGameMode()));
-            lore.add("§8━━━━━━━━━━━━━━━");
-            lore.add("§a§l▶ §aクリックして通報");
-            
-            meta.setLore(lore);
+            meta.setDisplayName("§f" + player.getName());
+            meta.setLore(Arrays.asList(
+                    "§7クリックして選択"
+            ));
             skull.setItemMeta(meta);
         }
 
         return skull;
-    }
-    
-    /**
-     * ゲームモードの表示名を取得
-     */
-    private String getGameModeDisplay(org.bukkit.GameMode gameMode) {
-        return switch (gameMode) {
-            case SURVIVAL -> "サバイバル";
-            case CREATIVE -> "クリエイティブ";
-            case ADVENTURE -> "アドベンチャー";
-            case SPECTATOR -> "スペクテイター";
-        };
     }
 
     /**
