@@ -41,7 +41,7 @@ public class ReportCategoryGUI {
     public void open(Player player) {
         // 既存のGUIデータを保存（インベントリを開くとクリアされるため）
         GUIListener listener = getGUIListener();
-        Map<String, Object> existingData = null;
+        Map<String, Object> existingData = new HashMap<>();
         if (listener != null) {
             existingData = listener.getGUIData(player);
         }
@@ -69,7 +69,7 @@ public class ReportCategoryGUI {
         // GUI状態とデータを設定（既存データを保持）
         if (listener != null) {
             listener.setGUIState(player, "CATEGORY_SELECT");
-            if (existingData != null && !existingData.isEmpty()) {
+            if (!existingData.isEmpty()) {
                 listener.setGUIData(player, existingData);
             }
         }
