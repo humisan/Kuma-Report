@@ -151,13 +151,17 @@ public class ReportListGUI {
                 statusText = report.getStatus().name();
             }
 
-            meta.setDisplayName("§f#" + report.getId() + " §7- §f" + report.getReportedName());
+            meta.setDisplayName("§e§l#" + report.getId() + " §8» §f" + report.getReportedName());
 
             List<String> lore = new ArrayList<>();
+            lore.add("§8━━━━━━━━━━━━━━━");
             lore.add("§7通報者: §f" + report.getReporterName());
             lore.add("§7ステータス: " + statusText);
+            lore.add("§7理由: §f" + (report.getReason().length() > 20 ? 
+                    report.getReason().substring(0, 20) + "..." : report.getReason()));
+            lore.add("§8━━━━━━━━━━━━━━━");
             lore.add("");
-            lore.add("§eクリックして詳細を表示");
+            lore.add("§a§l▶ §aクリックして詳細を表示");
 
             meta.setLore(lore);
             item.setItemMeta(meta);
@@ -174,7 +178,10 @@ public class ReportListGUI {
         ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {
-            meta.setDisplayName("§6" + displayName);
+            meta.setDisplayName("§e§l" + displayName);
+            meta.setLore(Arrays.asList(
+                    "§7クリックしてページ移動"
+            ));
             item.setItemMeta(meta);
         }
 
@@ -200,7 +207,7 @@ public class ReportListGUI {
      * フィルタ情報アイテムを作成
      */
     private ItemStack createFilterInfo(ReportStatus status, int page, int totalPages) {
-        ItemStack item = new ItemStack(Material.BOOK);
+        ItemStack item = new ItemStack(Material.ENCHANTED_BOOK);
         ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {
@@ -209,9 +216,12 @@ public class ReportListGUI {
                 statusDisplay = status.name();
             }
 
-            meta.setDisplayName("§9フィルタ: " + statusDisplay);
+            meta.setDisplayName("§b§lフィルタ情報");
             meta.setLore(Arrays.asList(
-                    "§7ページ " + page + "/" + totalPages
+                    "§8━━━━━━━━━━━━━━━",
+                    "§7ステータス: " + statusDisplay,
+                    "§7ページ: §f" + page + " §8/ §f" + totalPages,
+                    "§8━━━━━━━━━━━━━━━"
             ));
             item.setItemMeta(meta);
         }
@@ -223,11 +233,11 @@ public class ReportListGUI {
      * 背景をガラスで埋める
      */
     private void fillWithGlass(Inventory inventory, int fillUpTo) {
-        ItemStack glass = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+        ItemStack glass = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         ItemMeta meta = glass.getItemMeta();
 
         if (meta != null) {
-            meta.setDisplayName(" ");
+            meta.setDisplayName("§8");
             glass.setItemMeta(meta);
         }
 

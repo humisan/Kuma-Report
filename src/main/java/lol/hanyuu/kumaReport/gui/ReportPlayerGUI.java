@@ -166,14 +166,33 @@ public class ReportPlayerGUI {
 
         if (meta != null) {
             meta.setOwningPlayer(player);
-            meta.setDisplayName("§f" + player.getName());
-            meta.setLore(Arrays.asList(
-                    "§7クリックして選択"
-            ));
+            meta.setDisplayName("§e§l" + player.getName());
+            
+            List<String> lore = new ArrayList<>();
+            lore.add("§8━━━━━━━━━━━━━━━");
+            lore.add("§7ワールド: §f" + player.getWorld().getName());
+            lore.add("§7体力: §c" + String.format("%.1f", player.getHealth()) + " §8/ §c" + String.format("%.1f", player.getMaxHealth()));
+            lore.add("§7ゲームモード: §b" + getGameModeDisplay(player.getGameMode()));
+            lore.add("§8━━━━━━━━━━━━━━━");
+            lore.add("§a§l▶ §aクリックして通報");
+            
+            meta.setLore(lore);
             skull.setItemMeta(meta);
         }
 
         return skull;
+    }
+    
+    /**
+     * ゲームモードの表示名を取得
+     */
+    private String getGameModeDisplay(org.bukkit.GameMode gameMode) {
+        return switch (gameMode) {
+            case SURVIVAL -> "サバイバル";
+            case CREATIVE -> "クリエイティブ";
+            case ADVENTURE -> "アドベンチャー";
+            case SPECTATOR -> "スペクテイター";
+        };
     }
 
     /**
@@ -184,7 +203,10 @@ public class ReportPlayerGUI {
         ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {
-            meta.setDisplayName("§6" + displayName);
+            meta.setDisplayName("§e§l" + displayName);
+            meta.setLore(Arrays.asList(
+                    "§7クリックしてページ移動"
+            ));
             item.setItemMeta(meta);
         }
 
@@ -210,11 +232,17 @@ public class ReportPlayerGUI {
      * ページ情報アイテムを作成
      */
     private ItemStack createPageInfo(int page, int totalPages) {
-        ItemStack item = new ItemStack(Material.BOOK);
+        ItemStack item = new ItemStack(Material.ENCHANTED_BOOK);
         ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {
-            meta.setDisplayName("§9ページ " + page + "/" + totalPages);
+            meta.setDisplayName("§b§lページ情報");
+            meta.setLore(Arrays.asList(
+                    "§7現在のページ: §f" + page + " §8/ §f" + totalPages,
+                    "",
+                    "§7矢印をクリックして",
+                    "§7ページを移動できます"
+            ));
             item.setItemMeta(meta);
         }
 
@@ -229,7 +257,11 @@ public class ReportPlayerGUI {
         ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {
-            meta.setDisplayName("§c§lキャンセル");
+            meta.setDisplayName("§c§l✕ キャンセル");
+            meta.setLore(Arrays.asList(
+                    "§7通報をキャンセルして",
+                    "§7GUIを閉じます"
+            ));
             item.setItemMeta(meta);
         }
 
@@ -240,11 +272,11 @@ public class ReportPlayerGUI {
      * 背景をガラスで埋める
      */
     private void fillWithGlass(Inventory inventory, int fillUpTo) {
-        ItemStack glass = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+        ItemStack glass = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         ItemMeta meta = glass.getItemMeta();
 
         if (meta != null) {
-            meta.setDisplayName(" ");
+            meta.setDisplayName("§8");
             glass.setItemMeta(meta);
         }
 
