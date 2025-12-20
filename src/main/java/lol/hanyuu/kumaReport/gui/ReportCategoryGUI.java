@@ -14,21 +14,21 @@ import java.util.*;
 
 /**
  * 通報理由カテゴリ選択GUI
- * 27スロット（3行）で5つのカテゴリを表示
+ * 45スロット（5行）で5つのカテゴリを表示
  */
 public class ReportCategoryGUI {
     private final KumaReport plugin;
-    private static final int INVENTORY_SIZE = 27;
+    private static final int INVENTORY_SIZE = 45;
 
     // カテゴリ定義
     private static final Map<Integer, CategoryInfo> CATEGORIES = new LinkedHashMap<>();
 
     static {
-        CATEGORIES.put(0, new CategoryInfo(ReportType.CHEAT, Material.BARRIER, 1));
-        CATEGORIES.put(1, new CategoryInfo(ReportType.HARASSMENT, Material.TNT, 3));
-        CATEGORIES.put(2, new CategoryInfo(ReportType.CHAT_ABUSE, Material.WRITABLE_BOOK, 5));
-        CATEGORIES.put(3, new CategoryInfo(ReportType.GRIEFING, Material.DIAMOND_PICKAXE, 7));
-        CATEGORIES.put(4, new CategoryInfo(ReportType.OTHER, Material.PAPER, 9));
+        CATEGORIES.put(0, new CategoryInfo(ReportType.CHEAT, Material.BARRIER, 11));
+        CATEGORIES.put(1, new CategoryInfo(ReportType.HARASSMENT, Material.TNT, 13));
+        CATEGORIES.put(2, new CategoryInfo(ReportType.CHAT_ABUSE, Material.WRITABLE_BOOK, 15));
+        CATEGORIES.put(3, new CategoryInfo(ReportType.GRIEFING, Material.DIAMOND_PICKAXE, 21));
+        CATEGORIES.put(4, new CategoryInfo(ReportType.OTHER, Material.PAPER, 23));
     }
 
     public ReportCategoryGUI(KumaReport plugin) {
@@ -42,17 +42,20 @@ public class ReportCategoryGUI {
         String title = plugin.getMessageManager().getMessage("report.category-select");
         Inventory inventory = Bukkit.createInventory(null, INVENTORY_SIZE, title);
 
+        // 背景をガラスで埋める
+        fillWithGlass(inventory);
+
+        // タイトルアイテム
+        inventory.setItem(4, createTitleItem());
+
         // カテゴリアイテムを配置
         for (Map.Entry<Integer, CategoryInfo> entry : CATEGORIES.entrySet()) {
             CategoryInfo category = entry.getValue();
             inventory.setItem(category.slot, createCategoryItem(category.type));
         }
 
-        // 背景をガラスで埋める
-        fillWithGlass(inventory);
-
         // 戻るボタン
-        inventory.setItem(25, createBackButton());
+        inventory.setItem(40, createBackButton());
 
         player.openInventory(inventory);
 
@@ -72,7 +75,7 @@ public class ReportCategoryGUI {
         }
 
         // 戻るボタン
-        if (slot == 25) {
+        if (slot == 40) {
             ReportPlayerGUI playerGUI = new ReportPlayerGUI(plugin);
             playerGUI.open(player);
             return;
@@ -187,6 +190,27 @@ public class ReportCategoryGUI {
     }
 
     /**
+     * タイトルアイテムを作成
+     */
+    private ItemStack createTitleItem() {
+        ItemStack item = new ItemStack(Material.NAME_TAG);
+        ItemMeta meta = item.getItemMeta();
+
+        if (meta != null) {
+            meta.setDisplayName("§e§l通報理由を選択");
+            meta.setLore(Arrays.asList(
+                    "§8━━━━━━━━━━━━━━━",
+                    "§7該当する理由を",
+                    "§7クリックしてください",
+                    "§8━━━━━━━━━━━━━━━"
+            ));
+            item.setItemMeta(meta);
+        }
+
+        return item;
+    }
+
+    /**
      * カテゴリアイテムを作成
      */
     private ItemStack createCategoryItem(ReportType type) {
@@ -197,14 +221,49 @@ public class ReportCategoryGUI {
         if (meta != null) {
             String typeKey = "type." + type.name();
             String typeDisplay = plugin.getMessageManager().getMessage(typeKey);
-            meta.setDisplayName(typeDisplay);
-            meta.setLore(Arrays.asList(
-                    "§7クリックして選択"
-            ));
+            meta.setDisplayName("§f§l" + typeDisplay);
+            
+            List<String> lore = new ArrayList<>();
+            lore.add("§8━━━━━━━━━━━━━━━");
+            lore.addAll(getCategoryDescription(type));
+            lore.add("§8━━━━━━━━━━━━━━━");
+            lore.add("");
+            lore.add("§a§l▶ §aクリックして選択");
+            
+            meta.setLore(lore);
             item.setItemMeta(meta);
         }
 
         return item;
+    }
+
+    /**
+     * カテゴリの説明を取得
+     */
+    private List<String> getCategoryDescription(ReportType type) {
+        return switch (type) {
+            case CHEAT -> Arrays.asList(
+                    "§7不正なMOD、ハック、",
+                    "§7X-Rayなどの使用"
+            );
+            case HARASSMENT -> Arrays.asList(
+                    "§7他プレイヤーへの",
+                    "§7嫌がらせ行為"
+            );
+            case CHAT_ABUSE -> Arrays.asList(
+                    "§7暴言、スパム、",
+                    "§7不適切な発言"
+            );
+            case GRIEFING -> Arrays.asList(
+                    "§7建築物の破壊、",
+                    "§7荒らし行為"
+            );
+            case OTHER -> Arrays.asList(
+                    "§7上記に該当しない",
+                    "§7その他の違反行為",
+                    "§8(詳細を入力できます)"
+            );
+        };
     }
 
     /**
@@ -224,11 +283,14 @@ public class ReportCategoryGUI {
      * 戻るボタンを作成
      */
     private ItemStack createBackButton() {
-        ItemStack item = new ItemStack(Material.RED_WOOL);
+        ItemStack item = new ItemStack(Material.RED_CONCRETE);
         ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {
             meta.setDisplayName("§c§l← 戻る");
+            meta.setLore(Arrays.asList(
+                    "§7プレイヤー選択に戻る"
+            ));
             item.setItemMeta(meta);
         }
 
@@ -239,11 +301,11 @@ public class ReportCategoryGUI {
      * 背景をガラスで埋める
      */
     private void fillWithGlass(Inventory inventory) {
-        ItemStack glass = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+        ItemStack glass = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         ItemMeta meta = glass.getItemMeta();
 
         if (meta != null) {
-            meta.setDisplayName(" ");
+            meta.setDisplayName("§8");
             glass.setItemMeta(meta);
         }
 

@@ -17,11 +17,11 @@ import java.util.*;
 
 /**
  * 通報詳細・処理GUI（スタッフ用）
- * 27スロット（3行）で通報情報と処理ボタンを表示
+ * 45スロット（5行）で通報情報と処理ボタンを表示
  */
 public class ReportDetailGUI {
     private final KumaReport plugin;
-    private static final int INVENTORY_SIZE = 27;
+    private static final int INVENTORY_SIZE = 45;
 
     public ReportDetailGUI(KumaReport plugin) {
         this.plugin = plugin;
@@ -42,44 +42,66 @@ public class ReportDetailGUI {
             String title = "通報 #" + reportId;
             Inventory inventory = Bukkit.createInventory(null, INVENTORY_SIZE, title);
 
+            // 背景をガラスで埋める
+            fillWithGlass(inventory);
+
             // 情報表示アイテム
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-            // 1行目: 通報者, 被通報者, ステータス
-            inventory.setItem(0, createInfoItem("通報者", report.getReporterName(), Material.PLAYER_HEAD));
-            inventory.setItem(1, createInfoItem("被通報者", report.getReportedName(), Material.PLAYER_HEAD));
+            // タイトル（最上段中央）
+            inventory.setItem(4, createTitleItem(reportId));
+
+            // 1行目: 通報者, 被通報者
+            inventory.setItem(11, createInfoItem("§e通報者", report.getReporterName(), 
+                    Material.PLAYER_HEAD, Arrays.asList(
+                            "§7UUID: §f" + report.getReporterUUID()
+                    )));
+            inventory.setItem(13, createInfoItem("§c被通報者", report.getReportedName(), 
+                    Material.PLAYER_HEAD, Arrays.asList(
+                            "§7UUID: §f" + report.getReportedUUID()
+                    )));
 
             String statusKey = "status." + report.getStatus().name();
             String statusText = plugin.getMessageManager().getMessage(statusKey);
             if (statusText == null || statusText.equals(statusKey)) {
                 statusText = report.getStatus().name();
             }
-            inventory.setItem(2, createInfoItem("ステータス", statusText, Material.DIAMOND));
+            inventory.setItem(15, createInfoItem("§bステータス", statusText, 
+                    getMaterialForStatus(report.getStatus()), 
+                    Arrays.asList("§7現在の処理状況")));
 
             // 2行目: 理由、種類、日時
-            inventory.setItem(9, createInfoItem("理由", report.getReason(), Material.BOOK));
-
             String typeKey = "type." + report.getReportType().name();
             String typeText = plugin.getMessageManager().getMessage(typeKey);
             if (typeText == null || typeText.equals(typeKey)) {
                 typeText = report.getReportType().name();
             }
-            inventory.setItem(10, createInfoItem("種類", typeText, Material.REDSTONE));
-            inventory.setItem(11, createInfoItem("日時", sdf.format(report.getCreatedAt()), Material.CLOCK));
 
-            // 背景をガラスで埋める
-            fillWithGlass(inventory);
+            inventory.setItem(20, createInfoItem("§6種類", typeText, 
+                    Material.REDSTONE, Arrays.asList("§7通報の分類")));
+
+            inventory.setItem(22, createInfoItem("§d理由", 
+                    report.getReason().length() > 30 ? 
+                            report.getReason().substring(0, 30) + "..." : report.getReason(), 
+                    Material.BOOK, Arrays.asList(
+                            "§8━━━━━━━━━━━━━━━",
+                            "§f" + report.getReason(),
+                            "§8━━━━━━━━━━━━━━━"
+                    )));
+
+            inventory.setItem(24, createInfoItem("§a日時", sdf.format(report.getCreatedAt()), 
+                    Material.CLOCK, Arrays.asList("§7通報された日時")));
 
             // 3行目: ボタン
             if (report.getStatus() == ReportStatus.PENDING || report.getStatus() == ReportStatus.IN_PROGRESS) {
-                inventory.setItem(18, createActionButton("✓ 承認", Material.LIME_WOOL));
-                inventory.setItem(19, createActionButton("✗ 却下", Material.RED_WOOL));
+                inventory.setItem(37, createActionButton("✓ 承認", Material.LIME_CONCRETE));
+                inventory.setItem(38, createActionButton("✗ 却下", Material.RED_CONCRETE));
             } else {
-                inventory.setItem(18, createDisabledButton("承認済み"));
-                inventory.setItem(19, createDisabledButton("却下済み"));
+                inventory.setItem(37, createDisabledButton("承認済み"));
+                inventory.setItem(38, createDisabledButton("却下済み"));
             }
 
-            inventory.setItem(26, createBackButton());
+            inventory.setItem(43, createBackButton());
 
             player.openInventory(inventory);
 
@@ -113,19 +135,19 @@ public class ReportDetailGUI {
         }
 
         // 承認ボタン
-        if (slot == 18) {
+        if (slot == 37) {
             handleApprove(player, reportId);
             return;
         }
 
         // 却下ボタン
-        if (slot == 19) {
+        if (slot == 38) {
             handleDeny(player, reportId);
             return;
         }
 
         // 戻るボタン
-        if (slot == 26) {
+        if (slot == 43) {
             ReportListGUI listGUI = new ReportListGUI(plugin);
             listGUI.open(player);
             return;
@@ -219,21 +241,60 @@ public class ReportDetailGUI {
     }
 
     /**
-     * 情報アイテムを作成
+     * タイトルアイテムを作成
      */
-    private ItemStack createInfoItem(String label, String value, Material material) {
-        ItemStack item = new ItemStack(material);
+    private ItemStack createTitleItem(int reportId) {
+        ItemStack item = new ItemStack(Material.NETHER_STAR);
         ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {
-            meta.setDisplayName("§b" + label);
+            meta.setDisplayName("§6§l通報詳細 #" + reportId);
             meta.setLore(Arrays.asList(
-                    "§7" + value
+                    "§8━━━━━━━━━━━━━━━",
+                    "§7詳細情報を確認して",
+                    "§7処理を行ってください",
+                    "§8━━━━━━━━━━━━━━━"
             ));
             item.setItemMeta(meta);
         }
 
         return item;
+    }
+
+    /**
+     * 情報アイテムを作成
+     */
+    private ItemStack createInfoItem(String label, String value, Material material, List<String> extraLore) {
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+
+        if (meta != null) {
+            meta.setDisplayName(label);
+            List<String> lore = new ArrayList<>();
+            lore.add("§8━━━━━━━━━━━━━━━");
+            lore.add("§f" + value);
+            if (extraLore != null && !extraLore.isEmpty()) {
+                lore.add("");
+                lore.addAll(extraLore);
+            }
+            lore.add("§8━━━━━━━━━━━━━━━");
+            meta.setLore(lore);
+            item.setItemMeta(meta);
+        }
+
+        return item;
+    }
+
+    /**
+     * ステータスに応じたマテリアルを取得
+     */
+    private Material getMaterialForStatus(ReportStatus status) {
+        return switch (status) {
+            case PENDING -> Material.YELLOW_STAINED_GLASS;
+            case IN_PROGRESS -> Material.CYAN_STAINED_GLASS;
+            case ACCEPTED -> Material.LIME_STAINED_GLASS;
+            case DENIED -> Material.RED_STAINED_GLASS;
+        };
     }
 
     /**
@@ -244,9 +305,11 @@ public class ReportDetailGUI {
         ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {
-            meta.setDisplayName("§l" + displayName);
+            meta.setDisplayName("§f§l" + displayName);
             meta.setLore(Arrays.asList(
-                    "§7クリックして実行"
+                    "§8━━━━━━━━━━━━━━━",
+                    "§7クリックして実行",
+                    "§8━━━━━━━━━━━━━━━"
             ));
             item.setItemMeta(meta);
         }
@@ -273,11 +336,14 @@ public class ReportDetailGUI {
      * 戻るボタンを作成
      */
     private ItemStack createBackButton() {
-        ItemStack item = new ItemStack(Material.RED_WOOL);
+        ItemStack item = new ItemStack(Material.RED_CONCRETE);
         ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {
             meta.setDisplayName("§c§l← 戻る");
+            meta.setLore(Arrays.asList(
+                    "§7通報一覧に戻る"
+            ));
             item.setItemMeta(meta);
         }
 
@@ -288,11 +354,11 @@ public class ReportDetailGUI {
      * 背景をガラスで埋める
      */
     private void fillWithGlass(Inventory inventory) {
-        ItemStack glass = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+        ItemStack glass = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         ItemMeta meta = glass.getItemMeta();
 
         if (meta != null) {
-            meta.setDisplayName(" ");
+            meta.setDisplayName("§8");
             glass.setItemMeta(meta);
         }
 

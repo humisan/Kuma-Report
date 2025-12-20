@@ -16,11 +16,11 @@ import java.util.*;
 /**
  * バグレポート説明入力 GUI
  * `/bugreport` コマンド実行時に開く
- * 27スロット（3行）で説明入力フィールドを表示
+ * 45スロット（5行）で説明入力フィールドを表示
  */
 public class BugReportGUI {
     private final KumaReport plugin;
-    private static final int INVENTORY_SIZE = 27;
+    private static final int INVENTORY_SIZE = 45;
 
     public BugReportGUI(KumaReport plugin) {
         this.plugin = plugin;
@@ -36,28 +36,50 @@ public class BugReportGUI {
         // 背景を埋める
         fillWithGlass(inventory);
 
-        // 説明テキスト（中央上部）
-        inventory.setItem(10, createInfoItem("バグの説明を入力", Material.WRITABLE_BOOK, Arrays.asList(
-                "§7確定ボタンをクリック後、",
-                "§7チャットにバグの説明を",
-                "§7入力してください"
+        // タイトルデコレーション（上段）
+        inventory.setItem(4, createTitleItem());
+
+        // 説明アイテム（2段目中央）
+        inventory.setItem(11, createInfoItem("§e§l手順 1", Material.WRITABLE_BOOK, Arrays.asList(
+                "§7確定ボタンをクリックして",
+                "§7入力モードを開始します"
         )));
 
-        inventory.setItem(13, createInfoItem("最低10文字", Material.BOOK, Arrays.asList(
-                "§7最大1000文字まで",
-                "§7入力可能です"
+        inventory.setItem(13, createInfoItem("§e§l手順 2", Material.BOOK, Arrays.asList(
+                "§7チャットにバグの詳細を",
+                "§7入力してください",
+                "§8(最低10文字、最大1000文字)"
         )));
 
-        inventory.setItem(16, createInfoItem("座標は自動記録", Material.COMPASS, Arrays.asList(
-                "§7現在位置の座標が",
-                "§7自動的に記録されます"
+        inventory.setItem(15, createInfoItem("§e§l手順 3", Material.COMPASS, Arrays.asList(
+                "§7現在地の座標が",
+                "§7自動的に記録されます",
+                "§8(X: " + (int)player.getLocation().getX() + 
+                ", Y: " + (int)player.getLocation().getY() + 
+                ", Z: " + (int)player.getLocation().getZ() + ")"
         )));
 
-        // 確定ボタン（下段中央）
-        inventory.setItem(22, createConfirmButton());
+        // 注意事項（3段目）
+        inventory.setItem(20, createWarningItem("§c§l重要", Material.RED_STAINED_GLASS_PANE, Arrays.asList(
+                "§7再現手順を詳しく",
+                "§7説明してください"
+        )));
 
-        // キャンセルボタン（下段右）
-        inventory.setItem(26, createCancelButton());
+        inventory.setItem(22, createWarningItem("§6§lヒント", Material.ORANGE_STAINED_GLASS_PANE, Arrays.asList(
+                "§7いつ・どこで・何をしたら",
+                "§7バグが発生したか記載"
+        )));
+
+        inventory.setItem(24, createWarningItem("§a§l感謝", Material.LIME_STAINED_GLASS_PANE, Arrays.asList(
+                "§7バグ報告は",
+                "§7サーバー改善に役立ちます"
+        )));
+
+        // 確定ボタン（下段左寄り）
+        inventory.setItem(38, createConfirmButton());
+
+        // キャンセルボタン（下段右寄り）
+        inventory.setItem(42, createCancelButton());
 
         player.openInventory(inventory);
 
@@ -80,7 +102,7 @@ public class BugReportGUI {
         }
 
         // 確定ボタン
-        if (slot == 22) {
+        if (slot == 38) {
             player.closeInventory();
             player.sendMessage(plugin.getMessageManager().getMessage("bugreport.input-prompt"));
             // プレイヤーがチャットで説明を入力するのを待つ
@@ -89,11 +111,32 @@ public class BugReportGUI {
         }
 
         // キャンセルボタン
-        if (slot == 26) {
+        if (slot == 42) {
             player.closeInventory();
             player.sendMessage(plugin.getMessageManager().getMessage("report.reason-cancelled"));
             return;
         }
+    }
+
+    /**
+     * タイトルアイテムを作成
+     */
+    private ItemStack createTitleItem() {
+        ItemStack item = new ItemStack(Material.NETHER_STAR);
+        ItemMeta meta = item.getItemMeta();
+
+        if (meta != null) {
+            meta.setDisplayName("§6§l✦ バグレポート ✦");
+            meta.setLore(Arrays.asList(
+                    "§8━━━━━━━━━━━━━━━",
+                    "§7バグの報告にご協力",
+                    "§7いただきありがとうございます",
+                    "§8━━━━━━━━━━━━━━━"
+            ));
+            item.setItemMeta(meta);
+        }
+
+        return item;
     }
 
     /**
@@ -104,7 +147,27 @@ public class BugReportGUI {
         ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {
-            meta.setDisplayName("§f§l" + displayName);
+            meta.setDisplayName(displayName);
+            List<String> finalLore = new ArrayList<>();
+            finalLore.add("§8━━━━━━━━━━━━━━━");
+            finalLore.addAll(lore);
+            finalLore.add("§8━━━━━━━━━━━━━━━");
+            meta.setLore(finalLore);
+            item.setItemMeta(meta);
+        }
+
+        return item;
+    }
+
+    /**
+     * 警告アイテムを作成
+     */
+    private ItemStack createWarningItem(String displayName, Material material, List<String> lore) {
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+
+        if (meta != null) {
+            meta.setDisplayName(displayName);
             meta.setLore(lore);
             item.setItemMeta(meta);
         }
@@ -116,13 +179,18 @@ public class BugReportGUI {
      * 確定ボタンを作成
      */
     private ItemStack createConfirmButton() {
-        ItemStack item = new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
+        ItemStack item = new ItemStack(Material.LIME_CONCRETE);
         ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {
-            meta.setDisplayName("§a§l確定");
+            meta.setDisplayName("§a§l✓ 確定して入力開始");
             meta.setLore(Arrays.asList(
-                    "§7クリックしてチャット入力モードへ"
+                    "§8━━━━━━━━━━━━━━━",
+                    "§7クリックするとチャット",
+                    "§7入力モードに移行します",
+                    "§8━━━━━━━━━━━━━━━",
+                    "",
+                    "§a§l▶ クリックして続行"
             ));
             item.setItemMeta(meta);
         }
@@ -134,13 +202,16 @@ public class BugReportGUI {
      * キャンセルボタンを作成
      */
     private ItemStack createCancelButton() {
-        ItemStack item = new ItemStack(Material.BARRIER);
+        ItemStack item = new ItemStack(Material.RED_CONCRETE);
         ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {
-            meta.setDisplayName("§c§lキャンセル");
+            meta.setDisplayName("§c§l✕ キャンセル");
             meta.setLore(Arrays.asList(
-                    "§7バグレポートをキャンセル"
+                    "§8━━━━━━━━━━━━━━━",
+                    "§7バグレポートを",
+                    "§7キャンセルします",
+                    "§8━━━━━━━━━━━━━━━"
             ));
             item.setItemMeta(meta);
         }
@@ -152,11 +223,11 @@ public class BugReportGUI {
      * 背景をガラスで埋める
      */
     private void fillWithGlass(Inventory inventory) {
-        ItemStack glass = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+        ItemStack glass = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         ItemMeta meta = glass.getItemMeta();
 
         if (meta != null) {
-            meta.setDisplayName(" ");
+            meta.setDisplayName("§8");
             glass.setItemMeta(meta);
         }
 
