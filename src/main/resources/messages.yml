@@ -1,0 +1,117 @@
+# Kuma-Report メッセージファイル
+# 16進数カラーコード: &#RRGGBB 形式
+
+# カラーパレット（参照用）
+# ベース: &#1E3A8A (ネイビーブルー)
+# 成功: &#10B981 (ミントグリーン)
+# エラー: &#EF4444 (ソフトレッド)
+# 警告: &#F59E0B (アンバー)
+# 情報: &#60A5FA (ライトブルー)
+# グレー: &#94A3B8 (スレートグレー)
+
+# プレフィックス（グラデーション効果）
+prefix: "&#94A3B8[&#1E3A8AK&#2B4D9Bu&#3860ACm&#4573BDa&#5286CE&#60A5FAR&#6DB8FFe&#7ACBFFP&#87DEFFo&#94F0FFr&#A1FFFFt&#94A3B8]&r"
+
+# 共通メッセージ
+common:
+  no-permission: "{prefix} &#EF4444権限がありません。"
+  player-not-found: "{prefix} &#EF4444プレイヤーが見つかりません: &#F3F4F6{player}"
+  invalid-usage: "{prefix} &#F59E0B使用方法: &#E2E8F0{usage}"
+  config-reloaded: "{prefix} &#10B981設定ファイルをリロードしました。"
+  player-only: "{prefix} &#EF4444このコマンドはプレイヤーのみ実行できます。"
+  command-error: "{prefix} &#EF4444コマンドの実行中にエラーが発生しました。"
+
+# 通報機能
+report:
+  success: "{prefix} &#10B981&#F3F4F6{player}&#10B981を通報しました。スタッフが確認します。"
+  self-report: "{prefix} &#EF4444自分自身を通報することはできません。"
+  cooldown: "{prefix} &#F59E0B通報のクールダウン中です。あと&#FBBF24{time}秒&#F59E0Bお待ちください。"
+  gui-title: "プレイヤーを選択"
+  category-select: "通報理由を選択"
+  reason-input: "{prefix} &#60A5FA「その他」の理由をチャットに入力してください。&#94A3B8（30秒以内）"
+  reason-timeout: "{prefix} &#EF4444入力がタイムアウトしました。"
+  reason-cancelled: "{prefix} &#94A3B8通報をキャンセルしました。"
+  invalid-reason-length: "{prefix} &#EF4444理由は5文字以上500文字以下である必要があります。"
+  usage: "{prefix} &#F59E0B使用方法: &#E2E8F0/report &#94A3B8または &#E2E8F0/report <プレイヤー名> <理由>"
+
+# バグレポート
+bugreport:
+  success: "{prefix} &#10B981バグレポートを送信しました。ご報告ありがとうございます。"
+  cooldown: "{prefix} &#F59E0Bバグレポートのクールダウン中です。あと&#FBBF24{time}秒&#F59E0Bお待ちください。"
+  too-short: "{prefix} &#EF4444バグの説明が短すぎます。&#94A3B8（最低10文字）"
+  too-long: "{prefix} &#EF4444バグの説明は1000文字以下である必要があります。"
+  gui-title: "バグレポート"
+  input-prompt: "{prefix} &#60A5FAチャットにバグの説明を入力してください。&#94A3B8（最低10文字、最大1000文字）"
+  usage: "{prefix} &#F59E0B使用方法: &#E2E8F0/bugreport &#94A3B8または &#E2E8F0/bugreport <バグの説明>"
+
+# スタッフ通知
+staff:
+  new-report: "{prefix} &#F59E0B新しい通報: &#F3F4F6{reporter} &#94A3B8→ &#F3F4F6{reported} &#94A3B8(理由: &#E2E8F0{reason}&#94A3B8)"
+  new-bugreport: "{prefix} &#F59E0B新しいバグレポート: &#F3F4F6{reporter} &#94A3B8(&#E2E8F0{description}&#94A3B8)"
+  pending-reports: "{prefix} &#F59E0B未処理の通報が &#FBBF24{count}件 &#F59E0Bあります。"
+  report-handled: "{prefix} &#10B981通報 &#F3F4F6#{id} &#10B981を処理しました。"
+
+# 処理完了通知
+notification:
+  report-accepted: "{prefix} &#10B981あなたの通報が承認されました。&#94A3B8（通報ID: &#F3F4F6#{id}&#94A3B8）"
+  report-denied: "{prefix} &#EF4444あなたの通報が却下されました。&#94A3B8（通報ID: &#F3F4F6#{id}&#94A3B8）"
+
+# 管理コマンド
+admin:
+  list-header: "&#1E3A8A&l===== &#60A5FA通報一覧 &#94A3B8(ページ &#F3F4F6{page}&#94A3B8/&#F3F4F6{maxpage}&#94A3B8) &#1E3A8A&l====="
+  list-entry: "&#60A5FA#{id} &#94A3B8- &#E2E8F0{reporter} &#94A3B8→ &#E2E8F0{reported} &#94A3B8({status})"
+  list-footer: "&#94A3B8次のページ: &#60A5FA/reportadmin list {nextpage}"
+  no-reports: "{prefix} &#94A3B8通報がありません。"
+
+  usage: "{prefix} &#F59E0B使用方法: &#E2E8F0/reportadmin &#94A3B8[list|view|accept|deny|search|stats|reload]"
+  unknown-subcommand: "{prefix} &#EF4444不明なサブコマンドです: &#F3F4F6{subcommand}"
+  invalid-page-number: "{prefix} &#EF4444ページ番号は数値で入力してください。"
+  page-out-of-range: "{prefix} &#EF4444ページ番号が範囲外です。"
+  invalid-report-id: "{prefix} &#EF4444通報IDは数値で入力してください。"
+  view-usage: "{prefix} &#F59E0B使用方法: &#E2E8F0/reportadmin view <通報ID>"
+  accept-usage: "{prefix} &#F59E0B使用方法: &#E2E8F0/reportadmin accept <通報ID> &#94A3B8[メモ]"
+  deny-usage: "{prefix} &#F59E0B使用方法: &#E2E8F0/reportadmin deny <通報ID> &#94A3B8[メモ]"
+  search-usage: "{prefix} &#F59E0B使用方法: &#E2E8F0/reportadmin search <プレイヤー名>"
+  search-in-progress: "{prefix} &#E2E8F0(機能は準備中です)"
+
+  view-header: "&#1E3A8A&l===== &#60A5FA通報詳細 &#F3F4F6#{id} &#1E3A8A&l====="
+  view-reporter: "&#60A5FA通報者: &#F3F4F6{reporter}"
+  view-reported: "&#60A5FA被通報者: &#F3F4F6{reported}"
+  view-reason: "&#60A5FA理由: &#E2E8F0{reason}"
+  view-type: "&#60A5FA種類: {type}"
+  view-status: "&#60A5FAステータス: {status}"
+  view-date: "&#60A5FA日時: &#94A3B8{date}"
+  view-handler: "&#60A5FA処理者: &#F3F4F6{handler}"
+  view-handled-date: "&#60A5FA処理日時: &#94A3B8{date}"
+  view-note: "&#60A5FA処理メモ: &#E2E8F0{note}"
+  view-footer: "&#1E3A8A&l========================"
+
+  report-not-found: "{prefix} &#EF4444通報が見つかりません: &#F3F4F6#{id}"
+  already-handled: "{prefix} &#EF4444この通報は既に処理されています。"
+  accepted: "{prefix} &#10B981通報 &#F3F4F6#{id} &#10B981を承認しました。"
+  denied: "{prefix} &#EF4444通報 &#F3F4F6#{id} &#EF4444を却下しました。"
+
+  stats-header: "&#1E3A8A&l===== &#60A5FA通報統計 &#1E3A8A&l====="
+  stats-total: "&#60A5FA総通報数: &#F3F4F6{total}"
+  stats-pending: "&#F59E0B未処理: &#FBBF24{pending}"
+  stats-accepted: "&#10B981承認済み: &#34D399{accepted}"
+  stats-denied: "&#EF4444却下済み: &#F87171{denied}"
+  stats-footer: "&#1E3A8A&l==============="
+
+  search-header: "&#1E3A8A&l===== &#60A5FA{player} &#94A3B8の通報履歴 &#1E3A8A&l====="
+  search-no-results: "{prefix} &#94A3B8{player} に関する通報は見つかりませんでした。"
+
+# ステータス表示
+status:
+  PENDING: "&#F59E0B未処理"
+  IN_PROGRESS: "&#60A5FA処理中"
+  ACCEPTED: "&#10B981承認"
+  DENIED: "&#EF4444却下"
+
+# 通報タイプ
+type:
+  CHEAT: "&#EF4444チート"
+  HARASSMENT: "&#F59E0B迷惑行為"
+  CHAT_ABUSE: "&#FBBF24不適切発言"
+  GRIEFING: "&#DC2626荒らし"
+  OTHER: "&#94A3B8その他"

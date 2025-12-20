@@ -1,0 +1,59 @@
+name: Kuma-Report
+version: '${version}'
+main: lol.hanyuu.kumaReport.KumaReport
+api-version: '1.21'
+author: humisan
+description: KumaEarth向けに作成された多機能のreportプラグイン
+softdepend: [floodgate]
+
+commands:
+  report:
+    description: プレイヤーを通報します
+    usage: |-
+      /report - GUI経由で通報
+      /report <プレイヤー名> <理由> - テキストで通報
+    aliases: [rep]
+    permission: kumareport.use
+    permission-message: このコマンドを使用する権限がありません。
+
+  bugreport:
+    description: バグを報告します
+    usage: /bugreport <説明>
+    aliases: [bug, breport]
+    permission: kumareport.bugreport
+    permission-message: このコマンドを使用する権限がありません。
+
+  reportadmin:
+    description: 通報管理コマンド
+    usage: |-
+      /reportadmin list [ページ] - 通報一覧
+      /reportadmin view <ID> - 通報詳細
+      /reportadmin accept <ID> [メモ] - 通報を承認
+      /reportadmin deny <ID> [メモ] - 通報を却下
+      /reportadmin search <プレイヤー名> - プレイヤーの通報検索
+      /reportadmin stats - 統計情報
+      /reportadmin reload - 設定リロード
+    aliases: [radmin, ra]
+    permission: kumareport.admin
+    permission-message: このコマンドを使用する権限がありません。
+
+permissions:
+  kumareport.use:
+    description: 通報機能の使用
+    default: true
+
+  kumareport.bugreport:
+    description: バグレポート機能の使用
+    default: true
+
+  kumareport.admin:
+    description: 通報管理機能へのアクセス
+    default: op
+
+  kumareport.notify:
+    description: 通報時に通知を受け取る
+    default: op
+
+  kumareport.bypass.cooldown:
+    description: クールダウンをバイパス
+    default: op

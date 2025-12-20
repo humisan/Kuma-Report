@@ -1,0 +1,79 @@
+
+  # Kuma-Report 設定ファイル
+
+# データベース設定
+database:
+  type: sqlite
+  path: plugins/Kuma-Report/reports.db
+
+# クールダウン設定（秒）
+cooldown:
+  player-report: 60     # プレイヤー通報のクールダウン
+  bug-report: 120       # バグレポートのクールダウン
+
+# 通知設定
+notifications:
+  # スタッフへの通知を有効化
+  enable-staff-notification: true
+  # 通知音を再生
+  play-sound: true
+  sound-type: BLOCK_NOTE_BLOCK_PLING
+
+# Discord Webhook設定
+discord:
+  enabled: false
+  webhook-url: ""
+  mention-role-id: ""   # 通知時にメンションするロールID（オプション）
+
+# カラーシステム設定
+colors:
+  # 16進数カラーコードを使用（false: 従来の§コード）
+  use-hex-colors: true
+  # デバッグモード（true: カラーコードなしで表示）
+  debug-mode: false
+
+# GUI設定
+gui:
+  # 1ページあたりの表示数
+  items-per-page: 45
+  # GUIタイトル
+  title:
+    player-select: "&#60A5FA通報するプレイヤーを選択"
+    category-select: "&#60A5FA通報理由を選択"
+    report-list: "&#60A5FA通報一覧"
+    report-detail: "&#60A5FA通報詳細 - ID: {id}"
+
+# 通報理由カテゴリ
+report-categories:
+  - name: "チート使用"
+    material: BARRIER
+    description:
+      - "&#94A3B8不正なModやクライアント改造"
+      - "&#94A3B8X-Ray、Fly、KillAuraなど"
+
+  - name: "迷惑行為"
+    material: TNT
+    description:
+      - "&#94A3B8他プレイヤーへの嫌がらせ"
+      - "&#94A3B8PK、アイテム破壊など"
+
+  - name: "不適切発言"
+    material: WRITABLE_BOOK
+    description:
+      - "&#94A3B8暴言、差別発言"
+      - "&#94A3B8過度な下ネタなど"
+
+  - name: "荒らし行為"
+    material: DIAMOND_PICKAXE
+    description:
+      - "&#94A3B8建築物の破壊"
+      - "&#94A3B8意図的なサーバー妨害"
+
+  - name: "その他"
+    material: PAPER
+    description:
+      - "&#94A3B8上記以外の理由"
+      - "&#94A3B8クリック後にチャットで入力"
+
+# デバッグモード
+debug: false
