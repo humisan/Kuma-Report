@@ -39,6 +39,13 @@ public class ReportCategoryGUI {
      * GUIを開く
      */
     public void open(Player player) {
+        // 既存のGUIデータを保存（インベントリを開くとクリアされるため）
+        GUIListener listener = getGUIListener();
+        Map<String, Object> existingData = null;
+        if (listener != null) {
+            existingData = listener.getGUIData(player);
+        }
+
         String title = plugin.getMessageManager().getMessage("report.category-select");
         Inventory inventory = Bukkit.createInventory(null, INVENTORY_SIZE, title);
 
@@ -59,10 +66,12 @@ public class ReportCategoryGUI {
 
         player.openInventory(inventory);
 
-        // GUI状態を設定
-        GUIListener listener = getGUIListener();
+        // GUI状態とデータを設定（既存データを保持）
         if (listener != null) {
             listener.setGUIState(player, "CATEGORY_SELECT");
+            if (existingData != null && !existingData.isEmpty()) {
+                listener.setGUIData(player, existingData);
+            }
         }
     }
 
