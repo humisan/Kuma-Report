@@ -116,7 +116,7 @@ public class ChatListener implements Listener {
                 );
 
                 // スタッフに通知
-                notifyStaffBugReport(player.getName(), description, location);
+                notifyStaffBugReport(reportId, player.getName(), description, location);
 
                 // Discord通知
                 bugReport.setId(reportId);
@@ -236,14 +236,16 @@ public class ChatListener implements Listener {
     /**
      * スタッフにバグレポートを通知
      */
-    private void notifyStaffBugReport(String reporterName, String description, String location) {
+    private void notifyStaffBugReport(int reportId, String reporterName, String description, String location) {
         if (!plugin.getConfigManager().isStaffNotificationEnabled()) {
             return;
         }
 
         Map<String, String> placeholders = Map.of(
+                "id", String.valueOf(reportId),
                 "reporter", reporterName,
-                "description", description
+                "description", description,
+                "location", location
         );
         String message = plugin.getMessageManager().getMessage("staff.new-bugreport", placeholders);
 

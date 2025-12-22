@@ -8,6 +8,13 @@ on:
 jobs:
   build:
     if: ${{ github.event_name == 'pull_request' }}
+  push:
+    branches:
+      - "**"
+  pull_request:
+
+jobs:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
