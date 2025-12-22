@@ -82,6 +82,20 @@ public class ConfigManager {
     }
 
     /**
+     * 通知音の音量を取得
+     */
+    public float getSoundVolume() {
+        return (float) getConfig().getDouble("notifications.sound-volume", 1.0);
+    }
+
+    /**
+     * 通知音のピッチを取得
+     */
+    public float getSoundPitch() {
+        return (float) getConfig().getDouble("notifications.sound-pitch", 1.2);
+    }
+
+    /**
      * Discord連携が有効かどうか
      */
     public boolean isDiscordEnabled() {
