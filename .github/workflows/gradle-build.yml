@@ -63,7 +63,7 @@ jobs:
       - name: Get version from build.gradle
         id: get_version
         run: |
-          VERSION=$(grep "version = " build.gradle | cut -d"'" -f2)
+          VERSION=$(./gradlew properties --no-daemon --console=plain -q | grep "^version:" | awk '{print $2}')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Get latest tag
@@ -74,7 +74,7 @@ jobs:
           if [ -z "$LATEST_TAG" ]; then
             echo "tag_number=1" >> $GITHUB_OUTPUT
           else
-            TAG_NUMBER=$(echo $LATEST_TAG | grep -oE '[0-9]+$')
+            TAG_NUMBER=$(echo $LATEST_TAG | grep -oE '[0-9]+$' || echo '0')
             NEW_TAG_NUMBER=$((TAG_NUMBER + 1))
             echo "tag_number=$NEW_TAG_NUMBER" >> $GITHUB_OUTPUT
           fi
@@ -88,7 +88,8 @@ jobs:
             自動リリース - ビルド番号 ${{ steps.get_latest_tag.outputs.tag_number }}
             
             ## Changes
-            - ${{ github.event.head_commit.message }}
+            Commit: ${{ github.sha }}
+            Author: ${{ github.event.head_commit.author.name }}
           files: build/libs/*-shaded.jar
           draft: false
           prerelease: false
