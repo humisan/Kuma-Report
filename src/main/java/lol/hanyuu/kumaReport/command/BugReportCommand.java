@@ -113,7 +113,7 @@ public class BugReportCommand implements CommandExecutor, TabCompleter {
                 );
 
                 // スタッフに通知
-                notifyStaff(player.getName(), description, location);
+                notifyStaff(reportId, player.getName(), description, location);
 
             } catch (SQLException e) {
                 plugin.getLogger().severe("バグレポートの保存に失敗しました: " + e.getMessage());
@@ -129,14 +129,16 @@ public class BugReportCommand implements CommandExecutor, TabCompleter {
     /**
      * スタッフに通知
      */
-    private void notifyStaff(String reporterName, String description, String location) {
+    private void notifyStaff(int reportId, String reporterName, String description, String location) {
         if (!plugin.getConfigManager().isStaffNotificationEnabled()) {
             return;
         }
 
         Map<String, String> placeholders = Map.of(
+                "id", String.valueOf(reportId),
                 "reporter", reporterName,
-                "description", description
+                "description", description,
+                "location", location
         );
         String message = plugin.getMessageManager().getMessage("staff.new-bugreport", placeholders);
 
