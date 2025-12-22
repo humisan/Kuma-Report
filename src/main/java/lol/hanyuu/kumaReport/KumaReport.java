@@ -11,6 +11,8 @@ import lol.hanyuu.kumaReport.manager.ConfigManager;
 import lol.hanyuu.kumaReport.manager.CooldownManager;
 import lol.hanyuu.kumaReport.manager.DiscordWebhookManager;
 import lol.hanyuu.kumaReport.manager.MessageManager;
+import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -168,5 +170,36 @@ public final class KumaReport extends JavaPlugin {
      */
     public ChatListener getChatListener() {
         return chatListener;
+    }
+
+    /**
+     * スタッフ通知音を再生
+     */
+    public void playStaffNotificationSound(Player player) {
+        if (!configManager.isSoundEnabled()) {
+            return;
+        }
+
+        String soundName = configManager.getSoundType();
+        Sound sound;
+        try {
+            sound = Sound.valueOf(soundName);
+        } catch (IllegalArgumentException e) {
+            getLogger().warning("無効な通知音が設定されています: " + soundName);
+            return;
+        }
+
+        float volume = configManager.getSoundVolume();
+        float pitch = configManager.getSoundPitch();
+        if (volume < 0.0f) {
+            volume = 0.0f;
+        }
+        if (pitch < 0.0f) {
+            pitch = 0.0f;
+        } else if (pitch > 2.0f) {
+            pitch = 2.0f;
+        }
+
+        player.playSound(player.getLocation(), sound, volume, pitch);
     }
 }
