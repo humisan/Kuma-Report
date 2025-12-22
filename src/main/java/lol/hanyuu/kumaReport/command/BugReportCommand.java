@@ -142,7 +142,10 @@ public class BugReportCommand implements CommandExecutor, TabCompleter {
 
         Bukkit.getOnlinePlayers().stream()
                 .filter(p -> p.hasPermission("kumareport.notify"))
-                .forEach(p -> p.sendMessage(message));
+                .forEach(p -> {
+                    p.sendMessage(message);
+                    plugin.playStaffNotificationSound(p);
+                });
     }
 
     @Override
