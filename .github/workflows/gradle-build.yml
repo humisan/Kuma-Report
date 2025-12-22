@@ -60,16 +60,12 @@ jobs:
       - name: Build shaded JAR
         run: ./gradlew build
 
-      - name: Get version from build.gradle
+      - name: Get version and calculate next build number
         id: get_version
         run: |
           VERSION=$(./gradlew properties --no-daemon --console=plain -q | grep "^version:" | awk '{print $2}')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-
-      - name: Get latest tag
-        id: get_latest_tag
-        run: |
-          VERSION=$(./gradlew properties --no-daemon --console=plain -q | grep "^version:" | awk '{print $2}')
+          
           git fetch --tags
           # Get tags matching current version pattern
           LATEST_TAG=$(git tag -l "v${VERSION}-*" | sort -V | tail -n 1)
@@ -78,17 +74,22 @@ jobs:
           else
             # Extract build number after the last dash
             TAG_NUMBER=$(echo "${LATEST_TAG##*-}")
-            NEW_TAG_NUMBER=$((TAG_NUMBER + 1))
-            echo "tag_number=$NEW_TAG_NUMBER" >> $GITHUB_OUTPUT
+            # Validate it's a number, otherwise start from 1
+            if [[ "$TAG_NUMBER" =~ ^[0-9]+$ ]]; then
+              NEW_TAG_NUMBER=$((TAG_NUMBER + 1))
+              echo "tag_number=$NEW_TAG_NUMBER" >> $GITHUB_OUTPUT
+            else
+              echo "tag_number=1" >> $GITHUB_OUTPUT
+            fi
           fi
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.get_version.outputs.version }}-${{ steps.get_latest_tag.outputs.tag_number }}
-          name: Release v${{ steps.get_version.outputs.version }}-${{ steps.get_latest_tag.outputs.tag_number }}
+          tag_name: v${{ steps.get_version.outputs.version }}-${{ steps.get_version.outputs.tag_number }}
+          name: Release v${{ steps.get_version.outputs.version }}-${{ steps.get_version.outputs.tag_number }}
           body: |
-            自動リリース - ビルド番号 ${{ steps.get_latest_tag.outputs.tag_number }}
+            自動リリース - ビルド番号 ${{ steps.get_version.outputs.tag_number }}
             
             ## Changes
             Commit: ${{ github.sha }}
