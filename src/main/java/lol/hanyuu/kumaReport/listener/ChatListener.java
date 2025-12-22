@@ -116,7 +116,7 @@ public class ChatListener implements Listener {
                 );
 
                 // スタッフに通知
-                notifyStaffBugReport(player.getName(), description, location);
+                notifyStaffBugReport(reportId, player.getName(), description, location);
 
                 // Discord通知
                 bugReport.setId(reportId);
@@ -194,7 +194,7 @@ public class ChatListener implements Listener {
                 );
 
                 // スタッフに通知
-                notifyStaffReport(player.getName(), targetPlayer.getName(), reason);
+                notifyStaffReport(reportId, player.getName(), targetPlayer.getName(), reason);
 
                 // Discord通知
                 report.setId(reportId);
@@ -212,12 +212,13 @@ public class ChatListener implements Listener {
     /**
      * スタッフに通報を通知
      */
-    private void notifyStaffReport(String reporterName, String reportedName, String reason) {
+    private void notifyStaffReport(int reportId, String reporterName, String reportedName, String reason) {
         if (!plugin.getConfigManager().isStaffNotificationEnabled()) {
             return;
         }
 
         Map<String, String> placeholders = Map.of(
+                "id", String.valueOf(reportId),
                 "reporter", reporterName,
                 "reported", reportedName,
                 "reason", reason
@@ -226,26 +227,34 @@ public class ChatListener implements Listener {
 
         Bukkit.getOnlinePlayers().stream()
                 .filter(p -> p.hasPermission("kumareport.notify"))
-                .forEach(p -> p.sendMessage(message));
+                .forEach(p -> {
+                    p.sendMessage(message);
+                    plugin.playStaffNotificationSound(p);
+                });
     }
 
     /**
      * スタッフにバグレポートを通知
      */
-    private void notifyStaffBugReport(String reporterName, String description, String location) {
+    private void notifyStaffBugReport(int reportId, String reporterName, String description, String location) {
         if (!plugin.getConfigManager().isStaffNotificationEnabled()) {
             return;
         }
 
         Map<String, String> placeholders = Map.of(
+                "id", String.valueOf(reportId),
                 "reporter", reporterName,
-                "description", description
+                "description", description,
+                "location", location
         );
         String message = plugin.getMessageManager().getMessage("staff.new-bugreport", placeholders);
 
         Bukkit.getOnlinePlayers().stream()
                 .filter(p -> p.hasPermission("kumareport.notify"))
-                .forEach(p -> p.sendMessage(message));
+                .forEach(p -> {
+                    p.sendMessage(message);
+                    plugin.playStaffNotificationSound(p);
+                });
     }
 
     /**

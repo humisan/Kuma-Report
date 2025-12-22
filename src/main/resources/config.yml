@@ -17,6 +17,9 @@ notifications:
   enable-staff-notification: true
   # 通知音を再生
   play-sound: true
+  # 通知音の音量とピッチ
+  sound-volume: 1.0
+  sound-pitch: 1.2
   sound-type: BLOCK_NOTE_BLOCK_PLING
 
 # Discord Webhook設定

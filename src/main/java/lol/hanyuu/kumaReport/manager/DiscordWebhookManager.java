@@ -130,13 +130,14 @@ public class DiscordWebhookManager {
                 "  \"embeds\": [{\n" +
                 "    \"title\": \"新しい通報が届きました\",\n" +
                 "    \"color\": 16711680,\n" +
+                "    \"description\": \"**通報ID:** #" + report.getId() + "\\n\"\n" +
+                "      + \"**通報者:** " + report.getReporterName() + "\\n\"\n" +
+                "      + \"**被通報者:** " + report.getReportedName() + "\\n\"\n" +
+                "      + \"**種類:** " + typeDisplay + "\\n\"\n" +
+                "      + \"**日時:** " + sdf.format(report.getCreatedAt()) + "\",\n" +
                 "    \"fields\": [\n" +
-                "      {\"name\": \"通報ID\", \"value\": \"#" + report.getId() + "\", \"inline\": true},\n" +
-                "      {\"name\": \"通報者\", \"value\": \"" + report.getReporterName() + "\", \"inline\": true},\n" +
-                "      {\"name\": \"被通報者\", \"value\": \"" + report.getReportedName() + "\", \"inline\": false},\n" +
-                "      {\"name\": \"理由\", \"value\": \"" + escapeJson(report.getReason()) + "\", \"inline\": false},\n" +
-                "      {\"name\": \"種類\", \"value\": \"" + typeDisplay + "\", \"inline\": true},\n" +
-                "      {\"name\": \"日時\", \"value\": \"" + sdf.format(report.getCreatedAt()) + "\", \"inline\": true}\n" +
+                "      {\"name\": \"理由\", \"value\": \"```" + escapeJson(report.getReason()) + "```\", \"inline\": false},\n" +
+                "      {\"name\": \"対応コマンド\", \"value\": \"`/reportadmin view " + report.getId() + "`\", \"inline\": false}\n" +
                 "    ],\n" +
                 "    \"footer\": {\"text\": \"Kuma-Report\"}\n" +
                 "  }]\n" +
@@ -161,14 +162,14 @@ public class DiscordWebhookManager {
                 "  \"embeds\": [{\n" +
                 "    \"title\": \"新しいバグレポートが届きました\",\n" +
                 "    \"color\": 16753920,\n" +
+                "    \"description\": \"**レポートID:** #" + bugReport.getId() + "\\n\"\n" +
+                "      + \"**報告者:** " + bugReport.getReporterName() + "\\n\"\n" +
+                "      + \"**日時:** " + sdf.format(bugReport.getCreatedAt()) + "\",\n" +
                 "    \"fields\": [\n" +
-                "      {\"name\": \"レポートID\", \"value\": \"#" + bugReport.getId() + "\", \"inline\": true},\n" +
-                "      {\"name\": \"報告者\", \"value\": \"" + bugReport.getReporterName() + "\", \"inline\": true},\n" +
-                "      {\"name\": \"説明\", \"value\": \"" + escapeJson(bugReport.getDescription()) + "\", \"inline\": false},\n" +
-                "      {\"name\": \"場所\", \"value\": \"" + escapeJson(bugReport.getLocation()) + "\", \"inline\": false},\n" +
-                "      {\"name\": \"日時\", \"value\": \"" + sdf.format(bugReport.getCreatedAt()) + "\", \"inline\": true}\n" +
+                "      {\"name\": \"説明\", \"value\": \"```" + escapeJson(bugReport.getDescription()) + "```\", \"inline\": false},\n" +
+                "      {\"name\": \"場所\", \"value\": \"```" + escapeJson(bugReport.getLocation()) + "```\", \"inline\": false}\n" +
                 "    ],\n" +
-                "    \"footer\": {\"text\": \"Kuma-Report Bug Report\"}\n" +
+                "    \"footer\": {\"text\": \"Kuma-Report\"}\n" +
                 "  }]\n" +
                 "}";
 

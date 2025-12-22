@@ -10,7 +10,7 @@
 # グレー: &#94A3B8 (スレートグレー)
 
 # プレフィックス（グラデーション効果）
-prefix: "&#94A3B8[&#1E3A8AK&#2B4D9Bu&#3860ACm&#4573BDa&#5286CE&#60A5FAR&#6DB8FFe&#7ACBFFP&#87DEFFo&#94F0FFr&#A1FFFFt&#94A3B8]&r"
+prefix: "&#94A3B8[&#1E3A8AK&#2B4D9Bu&#3860ACm&#4573BDa&#5286CE-&#60A5FAR&#6DB8FFe&#7ACBFFp&#87DEFFo&#94F0FFr&#A1FFFFt&#94A3B8]&r"
 
 # 共通メッセージ
 common:
@@ -47,8 +47,16 @@ bugreport:
 
 # スタッフ通知
 staff:
-  new-report: "{prefix} &#F59E0B新しい通報: &#F3F4F6{reporter} &#94A3B8→ &#F3F4F6{reported} &#94A3B8(理由: &#E2E8F0{reason}&#94A3B8)"
-  new-bugreport: "{prefix} &#F59E0B新しいバグレポート: &#F3F4F6{reporter} &#94A3B8(&#E2E8F0{description}&#94A3B8)"
+  new-report: |-
+    {prefix} &#F59E0B新しい通報が届きました
+    &#94A3B8ID: &#F3F4F6#{id} &#94A3B8| 通報者: &#F3F4F6{reporter} &#94A3B8| 被通報者: &#F3F4F6{reported}
+    &#94A3B8理由: &#E2E8F0{reason}
+    &#94A3B8確認: &#60A5FA/reportadmin view {id}
+  new-bugreport: |-
+    {prefix} &#F59E0B新しいバグレポートが届きました
+    &#94A3B8ID: &#F3F4F6#{id} &#94A3B8| 報告者: &#F3F4F6{reporter}
+    &#94A3B8説明: &#E2E8F0{description}
+    &#94A3B8場所: &#E2E8F0{location}
   pending-reports: "{prefix} &#F59E0B未処理の通報が &#FBBF24{count}件 &#F59E0Bあります。"
   report-handled: "{prefix} &#10B981通報 &#F3F4F6#{id} &#10B981を処理しました。"
 

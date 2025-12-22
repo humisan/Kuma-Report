@@ -125,7 +125,7 @@ public class ReportReasonInputForm {
                 );
 
                 // スタッフに通知
-                notifyStaff(reporter.getName(), targetPlayer.getName(), reason);
+                notifyStaff(reportId, reporter.getName(), targetPlayer.getName(), reason);
 
                 // Discord通知
                 report.setId(reportId);
@@ -145,12 +145,13 @@ public class ReportReasonInputForm {
     /**
      * スタッフに通知
      */
-    private void notifyStaff(String reporterName, String reportedName, String reason) {
+    private void notifyStaff(int reportId, String reporterName, String reportedName, String reason) {
         if (!plugin.getConfigManager().isStaffNotificationEnabled()) {
             return;
         }
 
         Map<String, String> placeholders = Map.of(
+                "id", String.valueOf(reportId),
                 "reporter", reporterName,
                 "reported", reportedName,
                 "reason", reason
@@ -159,6 +160,9 @@ public class ReportReasonInputForm {
 
         Bukkit.getOnlinePlayers().stream()
                 .filter(p -> p.hasPermission("kumareport.notify"))
-                .forEach(p -> p.sendMessage(message));
+                .forEach(p -> {
+                    p.sendMessage(message);
+                    plugin.playStaffNotificationSound(p);
+                });
     }
 }
