@@ -6,20 +6,19 @@ Minecraft plugin for report management.
 
 このプロジェクトは、GitHub Releasesへの自動JAR配布を設定しています。
 
-### リリースの作成方法
+### 自動リリース
 
-1. GitHubのリポジトリページで「Releases」セクションに移動
-2. 「Draft a new release」をクリック
-3. タグを作成（例：`v1.0.0`）
-4. リリースタイトルと説明を入力
-5. 「Publish release」をクリック
-
-リリースを公開すると、GitHub Actionsが自動的に:
+プルリクエストがmainブランチにマージされると、GitHub Actionsが自動的に:
 - プロジェクトをビルド
 - シェーディングされたJARファイルを生成
+- 新しいリリースを作成
 - JARファイルをリリースに自動アップロード
 
-ビルドされたJARファイルは `Kuma-Report-1.0-shaded.jar` という名前でリリースに添付されます。
+リリースは自動的に `v{version}-{build_number}` の形式でタグ付けされます（例：`v1.0-1`, `v1.0-2`）。
+
+### 手動での動作確認
+
+プルリクエストを作成すると、ビルドジョブが自動的に実行され、JARファイルが正しくビルドされることを確認できます。
 
 ## Development
 
