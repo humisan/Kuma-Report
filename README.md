@@ -19,6 +19,7 @@
 8. [GUI機能](#gui機能)
 9. [トラブルシューティング](#トラブルシューティング)
 10. [開発者情報](#開発者情報)
+11. [リリースプロセス](#リリースプロセス)
 
 ---
 
@@ -101,7 +102,7 @@ Discord Webhookを通じて、通報やバグレポートをDiscordチャンネ�
 
 - Minecraft Server 1.21以降
 - Paper / Spigot / Purpur
-- Java 17以降
+- Java 21以降
 
 ### オプション
 
@@ -622,7 +623,7 @@ Could not load 'plugins/Kuma-Report-X.X.X.jar'
 ```
 
 **原因と解決策:**
-- Javaバージョンが古い → Java 17以降を使用
+- Javaバージョンが古い → Java 21以降を使用
 - サーバーバージョンが古い → Minecraft 1.21以降を使用
 - Paper/Spigot以外のサーバー → Paper/Spigot/Purpurを使用
 
@@ -929,6 +930,26 @@ kumaReport.notifyStaff(report);
 - [Paper API](https://papermc.io/)
 - [Geyser](https://geysermc.org/)
 - [Floodgate](https://github.com/GeyserMC/Floodgate)
+
+---
+
+## リリースプロセス
+
+このプロジェクトは、GitHub Releasesへの自動JAR配布を設定しています。
+
+### 自動リリース
+
+プルリクエストがmainブランチにマージされると、GitHub Actionsが自動的に:
+- プロジェクトをビルド
+- シェーディングされたJARファイルを生成
+- 新しいリリースを作成
+- JARファイルをリリースに自動アップロード
+
+リリースは自動的に `v{version}-{build_number}` の形式でタグ付けされます（例：`v1.0-1`, `v1.0-2`）。
+
+### 手動での動作確認
+
+プルリクエストを作成すると、ビルドジョブが自動的に実行され、JARファイルが正しくビルドされることを確認できます。
 
 ---
 
