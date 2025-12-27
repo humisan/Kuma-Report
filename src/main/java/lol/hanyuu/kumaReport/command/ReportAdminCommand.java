@@ -2,6 +2,7 @@ package lol.hanyuu.kumaReport.command;
 
 import lol.hanyuu.kumaReport.KumaReport;
 import lol.hanyuu.kumaReport.database.ReportDAO;
+import lol.hanyuu.kumaReport.gui.forms.FormManager;
 import lol.hanyuu.kumaReport.model.Report;
 import lol.hanyuu.kumaReport.model.ReportStatus;
 import org.bukkit.command.Command;
@@ -36,7 +37,11 @@ public class ReportAdminCommand implements CommandExecutor, TabCompleter {
 
         // サブコマンド処理
         if (args.length == 0) {
-            sender.sendMessage(plugin.getMessageManager().getMessage("admin.usage"));
+            if (sender instanceof Player player) {
+                new FormManager(plugin).openStaffGUI(player);
+            } else {
+                sender.sendMessage(plugin.getMessageManager().getMessage("admin.usage"));
+            }
             return true;
         }
 
@@ -51,6 +56,7 @@ public class ReportAdminCommand implements CommandExecutor, TabCompleter {
                 case "search" -> handleSearch(sender, args);
                 case "stats" -> handleStats(sender, args);
                 case "reload" -> handleReload(sender);
+                case "gui" -> handleGui(sender);
                 default -> sender.sendMessage(plugin.getMessageManager().getMessage("admin.unknown-subcommand", Map.of("subcommand", subcommand)));
             }
         } catch (SQLException e) {
@@ -299,6 +305,18 @@ public class ReportAdminCommand implements CommandExecutor, TabCompleter {
     }
 
     /**
+     * gui サブコマンド - 管理GUIを開く
+     */
+    private void handleGui(CommandSender sender) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(plugin.getMessageManager().getMessage("common.player-only"));
+            return;
+        }
+
+        new FormManager(plugin).openStaffGUI(player);
+    }
+
+    /**
      * ステータスに応じた色を取得
      */
     private String getStatusColor(ReportStatus status) {
@@ -334,7 +352,7 @@ public class ReportAdminCommand implements CommandExecutor, TabCompleter {
         }
 
         if (args.length == 1) {
-            return List.of("list", "view", "accept", "deny", "search", "stats", "reload").stream()
+            return List.of("list", "view", "accept", "deny", "search", "stats", "reload", "gui").stream()
                     .filter(s -> s.startsWith(args[0].toLowerCase()))
                     .collect(Collectors.toList());
         }

@@ -16,7 +16,9 @@ prefix: "&#94A3B8[&#1E3A8AK&#2B4D9Bu&#3860ACm&#4573BDa&#5286CE-&#60A5FAR&#6DB8FF
 common:
   no-permission: "{prefix} &#EF4444権限がありません。"
   player-not-found: "{prefix} &#EF4444プレイヤーが見つかりません: &#F3F4F6{player}"
-  invalid-usage: "{prefix} &#F59E0B使用方法: &#E2E8F0{usage}"
+  invalid-usage: |-
+    {prefix} &#F59E0B使用方法:
+    &#E2E8F0{usage}
   config-reloaded: "{prefix} &#10B981設定ファイルをリロードしました。"
   player-only: "{prefix} &#EF4444このコマンドはプレイヤーのみ実行できます。"
   command-error: "{prefix} &#EF4444コマンドの実行中にエラーが発生しました。"
@@ -33,7 +35,11 @@ report:
   reason-timeout: "{prefix} &#EF4444入力がタイムアウトしました。"
   reason-cancelled: "{prefix} &#94A3B8通報をキャンセルしました。"
   invalid-reason-length: "{prefix} &#EF4444理由は5文字以上500文字以下である必要があります。"
-  usage: "{prefix} &#F59E0B使用方法: &#E2E8F0/report &#94A3B8または &#E2E8F0/report <プレイヤー名> <理由>"
+  usage: |-
+    {prefix} &#F59E0B使用方法:
+    &#E2E8F0/report
+    &#94A3B8または
+    &#E2E8F0/report <プレイヤー名> <理由>
 
 # バグレポート
 bugreport:
@@ -43,7 +49,11 @@ bugreport:
   too-long: "{prefix} &#EF4444バグの説明は1000文字以下である必要があります。"
   gui-title: "バグレポート"
   input-prompt: "{prefix} &#60A5FAチャットにバグの説明を入力してください。&#94A3B8（最低10文字、最大1000文字）"
-  usage: "{prefix} &#F59E0B使用方法: &#E2E8F0/bugreport &#94A3B8または &#E2E8F0/bugreport <バグの説明>"
+  usage: |-
+    {prefix} &#F59E0B使用方法:
+    &#E2E8F0/bugreport
+    &#94A3B8または
+    &#E2E8F0/bugreport <バグの説明>
 
 # スタッフ通知
 staff:
@@ -57,13 +67,7 @@ staff:
     &#94A3B8ID: &#F3F4F6#{id} &#94A3B8| 報告者: &#F3F4F6{reporter}
     &#94A3B8説明: &#E2E8F0{description}
     &#94A3B8場所: &#E2E8F0{location}
-    {prefix} &#F59E0B新しい通報が届きました。
-    &#94A3B8ID: &#F3F4F6#{id}
-    &#94A3B8通報者: &#F3F4F6{reporter}
-    &#94A3B8被通報者: &#F3F4F6{reported}
-    &#94A3B8理由: &#E2E8F0{reason}
-    &#94A3B8確認: &#60A5FA/reportadmin view {id}
-  new-bugreport: "{prefix} &#F59E0B新しいバグレポート: &#F3F4F6{reporter} &#94A3B8(&#E2E8F0{description}&#94A3B8)"
+
   pending-reports: "{prefix} &#F59E0B未処理の通報が &#FBBF24{count}件 &#F59E0Bあります。"
   report-handled: "{prefix} &#10B981通報 &#F3F4F6#{id} &#10B981を処理しました。"
 
@@ -79,15 +83,32 @@ admin:
   list-footer: "&#94A3B8次のページ: &#60A5FA/reportadmin list {nextpage}"
   no-reports: "{prefix} &#94A3B8通報がありません。"
 
-  usage: "{prefix} &#F59E0B使用方法: &#E2E8F0/reportadmin &#94A3B8[list|view|accept|deny|search|stats|reload]"
+  usage: |-
+    {prefix} &#F59E0B使用方法:
+    &#E2E8F0/reportadmin &#94A3B8(GUI)
+    &#E2E8F0/reportadmin list [ページ]
+    &#E2E8F0/reportadmin view <通報ID>
+    &#E2E8F0/reportadmin accept <通報ID> &#94A3B8[メモ]
+    &#E2E8F0/reportadmin deny <通報ID> &#94A3B8[メモ]
+    &#E2E8F0/reportadmin search <プレイヤー名>
+    &#E2E8F0/reportadmin stats
+    &#E2E8F0/reportadmin reload
   unknown-subcommand: "{prefix} &#EF4444不明なサブコマンドです: &#F3F4F6{subcommand}"
   invalid-page-number: "{prefix} &#EF4444ページ番号は数値で入力してください。"
   page-out-of-range: "{prefix} &#EF4444ページ番号が範囲外です。"
   invalid-report-id: "{prefix} &#EF4444通報IDは数値で入力してください。"
-  view-usage: "{prefix} &#F59E0B使用方法: &#E2E8F0/reportadmin view <通報ID>"
-  accept-usage: "{prefix} &#F59E0B使用方法: &#E2E8F0/reportadmin accept <通報ID> &#94A3B8[メモ]"
-  deny-usage: "{prefix} &#F59E0B使用方法: &#E2E8F0/reportadmin deny <通報ID> &#94A3B8[メモ]"
-  search-usage: "{prefix} &#F59E0B使用方法: &#E2E8F0/reportadmin search <プレイヤー名>"
+  view-usage: |-
+    {prefix} &#F59E0B使用方法:
+    &#E2E8F0/reportadmin view <通報ID>
+  accept-usage: |-
+    {prefix} &#F59E0B使用方法:
+    &#E2E8F0/reportadmin accept <通報ID> &#94A3B8[メモ]
+  deny-usage: |-
+    {prefix} &#F59E0B使用方法:
+    &#E2E8F0/reportadmin deny <通報ID> &#94A3B8[メモ]
+  search-usage: |-
+    {prefix} &#F59E0B使用方法:
+    &#E2E8F0/reportadmin search <プレイヤー名>
   search-in-progress: "{prefix} &#E2E8F0(機能は準備中です)"
 
   view-header: "&#1E3A8A&l===== &#60A5FA通報詳細 &#F3F4F6#{id} &#1E3A8A&l====="

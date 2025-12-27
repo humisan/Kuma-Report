@@ -2,6 +2,7 @@ package lol.hanyuu.kumaReport.gui.forms;
 
 import lol.hanyuu.kumaReport.KumaReport;
 import lol.hanyuu.kumaReport.gui.ReportCategoryGUI;
+import lol.hanyuu.kumaReport.gui.ReportListGUI;
 import lol.hanyuu.kumaReport.gui.ReportPlayerGUI;
 import org.bukkit.entity.Player;
 
@@ -57,7 +58,7 @@ public class FormManager {
             new ReportListForm(plugin).open(player);
         } else {
             // Java版: Inventory GUI を使用
-            // TODO: ReportListGUI.open(player) 呼び出し
+            new ReportListGUI(plugin).open(player);
         }
     }
 }
